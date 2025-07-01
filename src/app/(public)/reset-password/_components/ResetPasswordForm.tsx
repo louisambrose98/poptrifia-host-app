@@ -1,9 +1,5 @@
 "use client";
 
-import {
-  ACTION_AUTH_START_LOADING,
-  ACTION_AUTH_STOP_LOADING,
-} from "@/actions/AuthActions";
 import { FormError, FormInput, FormWrapper } from "@/components/forms";
 import {
   AUTO_COMPLETE,
@@ -11,17 +7,15 @@ import {
   INPUT_TYPES,
   RESET_PASSWORD,
 } from "@/constants/authPageText";
-import { AuthContext } from "@/context/AuthContext";
+import { useAuthFormHandler } from "@/hooks/useAuthFormHandler";
 import { AmplifyAuthClient } from "@/lib/amplifyAuthClient";
-import { resetPasswordSchema } from "@/schema/auth";
+import { resetPasswordSchema } from "@/schema/resetPassword";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 export default function ResetPasswordForm() {
-  const { authDispatch } = useContext(AuthContext);
-  const [formError, setFormError] = useState<string | undefined>(undefined);
   const [isSuccess, setIsSuccess] = useState(false);
   const form = useForm<z.infer<typeof resetPasswordSchema>>({
     resolver: zodResolver(resetPasswordSchema),
@@ -32,25 +26,27 @@ export default function ResetPasswordForm() {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof resetPasswordSchema>) => {
-    setFormError(undefined);
-    setIsSuccess(false);
-    authDispatch({ type: ACTION_AUTH_START_LOADING });
-    try {
+  const { handleSubmit, formError, isLoading } = useAuthFormHandler({
+    schema: resetPasswordSchema,
+    callback: async (validatedData) => {
       await AmplifyAuthClient.confirmResetPassword(
-        values.email,
-        values.code,
-        values.newPassword
+        validatedData.email,
+        validatedData.code,
+        validatedData.newPassword
       );
+      return { success: true, email: validatedData.email };
+    },
+    errorMessage: RESET_PASSWORD.errorMessages.default,
+    onSuccess: (result) => {
       setIsSuccess(true);
-    } catch (err: unknown) {
-      const errorMessage =
-        err instanceof Error
-          ? err.message
-          : RESET_PASSWORD.errorMessages.default;
-      setFormError(errorMessage);
-    } finally {
-      authDispatch({ type: ACTION_AUTH_STOP_LOADING });
+    },
+  });
+
+  const onSubmit = async (values: z.infer<typeof resetPasswordSchema>) => {
+    const result = await handleSubmit(values);
+
+    if (result.success) {
+      console.log("Password reset successful:", result.data);
     }
   };
 
@@ -94,8 +90,12 @@ export default function ResetPasswordForm() {
         autoComplete={AUTO_COMPLETE.newPassword}
       />
       <FormError message={formError} />
-      <button type="submit" className="w-full mt-4 btn btn-primary">
-        {RESET_PASSWORD.buttonText}
+      <button
+        type="submit"
+        className="w-full mt-4 btn btn-primary"
+        disabled={isLoading}
+      >
+        {isLoading ? "Resetting Password..." : RESET_PASSWORD.buttonText}
       </button>
     </FormWrapper>
   );

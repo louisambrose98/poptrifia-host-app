@@ -1,9 +1,5 @@
 "use client";
 
-import {
-  ACTION_AUTH_START_LOADING,
-  ACTION_AUTH_STOP_LOADING,
-} from "@/actions/AuthActions";
 import { FormError, FormInput, FormWrapper } from "@/components/forms";
 import {
   AUTO_COMPLETE,
@@ -11,58 +7,52 @@ import {
   FORM_LABELS,
   INPUT_TYPES,
 } from "@/constants/authPageText";
-import { AuthContext } from "@/context/AuthContext";
+import { useAuthFormHandler } from "@/hooks/useAuthFormHandler";
 import { AmplifyAuthClient } from "@/lib/amplifyAuthClient";
-import { confirmEmailSchema } from "@/schema/auth";
+import { confirmEmailSchema } from "@/schema/confirmEmail";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 export default function ConfirmEmailForm() {
-  const { authDispatch } = useContext(AuthContext);
-  const [formError, setFormError] = useState<string | undefined>(undefined);
   const [isSuccess, setIsSuccess] = useState(false);
   const form = useForm<z.infer<typeof confirmEmailSchema>>({
     resolver: zodResolver(confirmEmailSchema),
     defaultValues: { email: "", code: "" },
   });
 
-  const onSubmit = async (values: z.infer<typeof confirmEmailSchema>) => {
-    setFormError(undefined);
-    setIsSuccess(false);
-    authDispatch({ type: ACTION_AUTH_START_LOADING });
-    try {
-      await AmplifyAuthClient.confirmSignUp(values.email, values.code);
+  const { handleSubmit, formError, isLoading } = useAuthFormHandler({
+    schema: confirmEmailSchema,
+    callback: async (validatedData) => {
+      await AmplifyAuthClient.confirmSignUp(
+        validatedData.email,
+        validatedData.code
+      );
+      return { success: true, email: validatedData.email };
+    },
+    errorMessage: CONFIRM_EMAIL.errorMessages.failedToConfirm,
+    onSuccess: (result) => {
       setIsSuccess(true);
-    } catch (err: unknown) {
-      const errorMessage =
-        err instanceof Error
-          ? err.message
-          : CONFIRM_EMAIL.errorMessages.failedToConfirm;
-      setFormError(errorMessage);
-    } finally {
-      authDispatch({ type: ACTION_AUTH_STOP_LOADING });
-    }
-  };
+    },
+  });
 
   const handleResendCode = async () => {
     const email = form.getValues("email");
     if (!email) return;
 
-    setFormError(undefined);
-    authDispatch({ type: ACTION_AUTH_START_LOADING });
-    try {
-      await AmplifyAuthClient.resendSignUpCode(email);
-      // Show success message or toast
-    } catch (err: unknown) {
-      const errorMessage =
-        err instanceof Error
-          ? err.message
-          : CONFIRM_EMAIL.errorMessages.failedToConfirm;
-      setFormError(errorMessage);
-    } finally {
-      authDispatch({ type: ACTION_AUTH_STOP_LOADING });
+    const result = await handleSubmit({ email, code: "" });
+
+    if (result.success) {
+      console.log("Confirmation code sent successfully");
+    }
+  };
+
+  const onSubmit = async (values: z.infer<typeof confirmEmailSchema>) => {
+    const result = await handleSubmit(values);
+
+    if (result.success) {
+      console.log("Email confirmation successful:", result.data);
     }
   };
 
@@ -100,15 +90,20 @@ export default function ConfirmEmailForm() {
         autoComplete={AUTO_COMPLETE.oneTimeCode}
       />
       <FormError message={formError} />
-      <button type="submit" className="w-full mt-4 btn btn-primary">
-        {CONFIRM_EMAIL.buttonText}
+      <button
+        type="submit"
+        className="w-full mt-4 btn btn-primary"
+        disabled={isLoading}
+      >
+        {isLoading ? "Confirming Email..." : CONFIRM_EMAIL.buttonText}
       </button>
       <button
         type="button"
         onClick={handleResendCode}
         className="w-full mt-2 text-blue-600 hover:text-blue-800 underline"
+        disabled={isLoading}
       >
-        Resend Code
+        {isLoading ? "Sending..." : "Resend Code"}
       </button>
     </FormWrapper>
   );

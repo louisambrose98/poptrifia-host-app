@@ -1,9 +1,5 @@
 "use client";
 
-import {
-  ACTION_AUTH_START_LOADING,
-  ACTION_AUTH_STOP_LOADING,
-} from "@/actions/AuthActions";
 import { FormError, FormInput, FormWrapper } from "@/components/forms";
 import {
   AUTO_COMPLETE,
@@ -11,34 +7,30 @@ import {
   INPUT_TYPES,
   SIGN_UP,
 } from "@/constants/authPageText";
-import { AuthContext } from "@/context/AuthContext";
+import { useAuthFormHandler } from "@/hooks/useAuthFormHandler";
 import { AmplifyAuthClient } from "@/lib/amplifyAuthClient";
-import { signUpSchema } from "@/schema/auth";
+import { signUpSchema } from "@/schema/signUp";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 export default function SignUpForm() {
-  const { authDispatch } = useContext(AuthContext);
-  const [formError, setFormError] = useState<string | undefined>(undefined);
   const [isSuccess, setIsSuccess] = useState(false);
   const form = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
     defaultValues: { email: "", password: "", confirmPassword: "" },
   });
 
-  const onSubmit = async (values: z.infer<typeof signUpSchema>) => {
-    setFormError(undefined);
-    setIsSuccess(false);
-    authDispatch({ type: ACTION_AUTH_START_LOADING });
-    try {
+  const { handleSubmit, formError, isLoading } = useAuthFormHandler({
+    schema: signUpSchema,
+    callback: async (validatedData) => {
       const result = await AmplifyAuthClient.signUp(
-        values.email,
-        values.password
+        validatedData.email,
+        validatedData.password
       );
+
       if (result.isSignUpComplete) {
-        setIsSuccess(true);
         // If auto sign-in is enabled, handle it
         if (result.nextStep?.signUpStep === "COMPLETE_AUTO_SIGN_IN") {
           try {
@@ -47,16 +39,27 @@ export default function SignUpForm() {
             console.warn("Auto sign-in failed:", autoSignInError);
           }
         }
+        return { success: true, userId: result.userId };
       } else {
         // User needs to confirm email
-        setIsSuccess(true);
+        return {
+          success: true,
+          needsConfirmation: true,
+          userId: result.userId,
+        };
       }
-    } catch (err: unknown) {
-      const errorMessage =
-        err instanceof Error ? err.message : SIGN_UP.errorMessages.default;
-      setFormError(errorMessage);
-    } finally {
-      authDispatch({ type: ACTION_AUTH_STOP_LOADING });
+    },
+    errorMessage: SIGN_UP.errorMessages.default,
+    onSuccess: (result) => {
+      setIsSuccess(true);
+    },
+  });
+
+  const onSubmit = async (values: z.infer<typeof signUpSchema>) => {
+    const result = await handleSubmit(values);
+
+    if (result.success) {
+      console.log("Sign up successful:", result.data);
     }
   };
 
@@ -103,8 +106,12 @@ export default function SignUpForm() {
         autoComplete={AUTO_COMPLETE.newPassword}
       />
       <FormError message={formError} />
-      <button type="submit" className="w-full mt-4 btn btn-primary">
-        {SIGN_UP.buttonText}
+      <button
+        type="submit"
+        className="w-full mt-4 btn btn-primary"
+        disabled={isLoading}
+      >
+        {isLoading ? "Creating Account..." : SIGN_UP.buttonText}
       </button>
     </FormWrapper>
   );

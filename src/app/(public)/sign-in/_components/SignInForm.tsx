@@ -2,8 +2,6 @@
 
 import {
   ACTION_AUTH_AUTHENTICATED,
-  ACTION_AUTH_START_LOADING,
-  ACTION_AUTH_STOP_LOADING,
   ACTION_AUTH_UNAUTHENTICATED,
 } from "@/actions/AuthActions";
 import { FormError, FormInput, FormWrapper } from "@/components/forms";
@@ -14,11 +12,12 @@ import {
   SIGN_IN,
 } from "@/constants/authPageText";
 import { AuthContext } from "@/context/AuthContext";
+import { useAuthFormHandler } from "@/hooks/useAuthFormHandler";
 import { AmplifyAuthClient } from "@/lib/amplifyAuthClient";
-import { signInSchema } from "@/schema/auth";
+import { signInSchema } from "@/schema/signIn";
 import { InitialAuthUser } from "@/state/AuthState";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -47,20 +46,19 @@ function mapAmplifyUserToAuthUserState(
 
 export default function SignInForm() {
   const { authDispatch } = useContext(AuthContext);
-  const [formError, setFormError] = useState<string | undefined>(undefined);
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
     defaultValues: { email: "", password: "" },
   });
 
-  const onSubmit = async (values: z.infer<typeof signInSchema>) => {
-    setFormError(undefined);
-    authDispatch({ type: ACTION_AUTH_START_LOADING });
-    try {
+  const { handleSubmit, formError, isLoading } = useAuthFormHandler({
+    schema: signInSchema,
+    callback: async (validatedData) => {
       const result = await AmplifyAuthClient.signIn(
-        values.email,
-        values.password
+        validatedData.email,
+        validatedData.password
       );
+
       if (result.isSignedIn && result.nextStep?.signInStep === "DONE") {
         // Fetch user info and attributes
         const user = await AmplifyAuthClient.getCurrentUser();
@@ -72,22 +70,29 @@ export default function SignInForm() {
           return acc;
         }, {} as Record<string, string>);
         const mappedUser = mapAmplifyUserToAuthUserState(user, attributes);
+
         authDispatch({
           type: ACTION_AUTH_AUTHENTICATED,
           payload: { user: mappedUser },
         });
+
+        return { success: true, user: mappedUser };
       } else {
-        setFormError(SIGN_IN.errorMessages.additionalSteps);
         authDispatch({ type: ACTION_AUTH_UNAUTHENTICATED });
+        throw new Error(SIGN_IN.errorMessages.additionalSteps);
       }
-    } catch (err: unknown) {
-      const errorMessage =
-        err instanceof Error ? err.message : SIGN_IN.errorMessages.default;
-      setFormError(errorMessage);
-      authDispatch({ type: ACTION_AUTH_UNAUTHENTICATED });
-    } finally {
-      authDispatch({ type: ACTION_AUTH_STOP_LOADING });
+    },
+    errorMessage: SIGN_IN.errorMessages.default,
+  });
+
+  const onSubmit = async (values: z.infer<typeof signInSchema>) => {
+    const result = await handleSubmit(values);
+
+    if (result.success) {
+      // Handle successful sign in (e.g., redirect)
+      console.log("Sign in successful:", result.data);
     }
+    // Error handling is done automatically by the form handler
   };
 
   return (
@@ -105,8 +110,12 @@ export default function SignInForm() {
         autoComplete={AUTO_COMPLETE.currentPassword}
       />
       <FormError message={formError} />
-      <button type="submit" className="w-full mt-4 btn btn-primary">
-        {SIGN_IN.buttonText}
+      <button
+        type="submit"
+        className="w-full mt-4 btn btn-primary"
+        disabled={isLoading}
+      >
+        {isLoading ? "Signing In..." : SIGN_IN.buttonText}
       </button>
     </FormWrapper>
   );

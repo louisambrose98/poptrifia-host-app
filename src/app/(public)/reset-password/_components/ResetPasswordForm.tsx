@@ -1,7 +1,8 @@
 "use client";
 
 import { FormCard } from "@/components/FormCard";
-import { FormInput, FormWrapper } from "@/components/forms";
+import { FormInput } from "@/components/FormInput";
+import { FormWrapper } from "@/components/FormWrapper";
 import {
   AUTO_COMPLETE,
   FORM_LABELS,

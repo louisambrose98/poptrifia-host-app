@@ -1,0 +1,13 @@
+export const EMPTY = "";
+export const SPACE = " ";
+export const DOT = ".";
+export const COLON = ":";
+export const COMMA = ",";
+export const SEMICOLON = ";";
+export const NEWLINE = "\n";
+export const TAB = "\t";
+export const BACKSPACE = "\b";
+export const RETURN = "\r";
+export const ZERO = 0;
+export const ONE = 1;
+export const SECOND = 1000;

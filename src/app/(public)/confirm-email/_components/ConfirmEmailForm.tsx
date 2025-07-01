@@ -1,12 +1,17 @@
 "use client";
 
-import { FormError, FormInput, FormWrapper } from "@/components/forms";
+import { FormCard } from "@/components/FormCard";
+import { FormInput, FormWrapper } from "@/components/forms";
 import {
   AUTO_COMPLETE,
   CONFIRM_EMAIL,
   FORM_LABELS,
   INPUT_TYPES,
+  LINK_TEXT,
+  LOADING_TEXT,
+  SUCCESS_MESSAGES,
 } from "@/constants/authPageText";
+import { ROUTE_SIGN_IN, ROUTE_SIGN_UP } from "@/constants/routes";
 import { useAuthFormHandler } from "@/hooks/useAuthFormHandler";
 import { AmplifyAuthClient } from "@/lib/amplifyAuthClient";
 import { confirmEmailSchema } from "@/schema/confirmEmail";
@@ -32,7 +37,7 @@ export default function ConfirmEmailForm() {
       return { success: true, email: validatedData.email };
     },
     errorMessage: CONFIRM_EMAIL.errorMessages.failedToConfirm,
-    onSuccess: (result) => {
+    onSuccess: () => {
       setIsSuccess(true);
     },
   });
@@ -58,53 +63,66 @@ export default function ConfirmEmailForm() {
 
   if (isSuccess) {
     return (
-      <div className="text-center">
-        <h3 className="text-lg font-semibold mb-2">
-          {CONFIRM_EMAIL.successMessages.title}
-        </h3>
-        <p className="text-gray-600 mb-4">
-          {CONFIRM_EMAIL.successMessages.description}
-        </p>
-        <a
-          href="/sign-in"
-          className="text-blue-600 hover:text-blue-800 underline"
-        >
-          {CONFIRM_EMAIL.secondaryButton}
-        </a>
-      </div>
+      <FormCard
+        title={CONFIRM_EMAIL.successMessages.title}
+        description={CONFIRM_EMAIL.successMessages.description}
+        bottomLink={{
+          href: ROUTE_SIGN_IN,
+          name: CONFIRM_EMAIL.secondaryButton,
+        }}
+      >
+        <div className="text-center">
+          <p className="text-muted-foreground">
+            {SUCCESS_MESSAGES.emailConfirmedSuccess}
+          </p>
+        </div>
+      </FormCard>
     );
   }
 
   return (
-    <FormWrapper form={form} onSubmit={onSubmit}>
-      <FormInput
-        name="email"
-        label={FORM_LABELS.email}
-        type={INPUT_TYPES.email}
-        autoComplete={AUTO_COMPLETE.email}
-      />
-      <FormInput
-        name="code"
-        label={FORM_LABELS.confirmationCode}
-        type={INPUT_TYPES.text}
-        autoComplete={AUTO_COMPLETE.oneTimeCode}
-      />
-      <FormError message={formError} />
-      <button
-        type="submit"
-        className="w-full mt-4 btn btn-primary"
-        disabled={isLoading}
-      >
-        {isLoading ? "Confirming Email..." : CONFIRM_EMAIL.buttonText}
-      </button>
-      <button
-        type="button"
-        onClick={handleResendCode}
-        className="w-full mt-2 text-blue-600 hover:text-blue-800 underline"
-        disabled={isLoading}
-      >
-        {isLoading ? "Sending..." : "Resend Code"}
-      </button>
-    </FormWrapper>
+    <FormCard
+      title={CONFIRM_EMAIL.pageTitle}
+      description={CONFIRM_EMAIL.pageDescription}
+      error={formError}
+      topLink={{
+        href: ROUTE_SIGN_UP,
+        name: LINK_TEXT.signUpWithDifferentEmail,
+      }}
+    >
+      <FormWrapper form={form} onSubmit={onSubmit}>
+        <div className="space-y-4">
+          <FormInput
+            name="email"
+            label={FORM_LABELS.email}
+            type={INPUT_TYPES.email}
+            autoComplete={AUTO_COMPLETE.email}
+          />
+          <FormInput
+            name="code"
+            label={FORM_LABELS.confirmationCode}
+            type={INPUT_TYPES.text}
+            autoComplete={AUTO_COMPLETE.oneTimeCode}
+          />
+          <button
+            type="submit"
+            className="w-full btn btn-primary"
+            disabled={isLoading}
+          >
+            {isLoading
+              ? LOADING_TEXT.confirmingEmail
+              : CONFIRM_EMAIL.buttonText}
+          </button>
+          <button
+            type="button"
+            onClick={handleResendCode}
+            className="w-full text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            disabled={isLoading}
+          >
+            {isLoading ? LOADING_TEXT.sending : LINK_TEXT.resendCodeButton}
+          </button>
+        </div>
+      </FormWrapper>
+    </FormCard>
   );
 }

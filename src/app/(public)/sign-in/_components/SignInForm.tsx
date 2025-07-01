@@ -4,13 +4,18 @@ import {
   ACTION_AUTH_AUTHENTICATED,
   ACTION_AUTH_UNAUTHENTICATED,
 } from "@/actions/AuthActions";
-import { FormError, FormInput, FormWrapper } from "@/components/forms";
+import { FormCard } from "@/components/FormCard";
+import { FormInput, FormWrapper } from "@/components/forms";
 import {
   AUTO_COMPLETE,
   FORM_LABELS,
   INPUT_TYPES,
+  LINK_MESSAGES,
+  LINK_TEXT,
+  LOADING_TEXT,
   SIGN_IN,
 } from "@/constants/authPageText";
+import { ROUTE_FORGOT_PASSWORD, ROUTE_SIGN_UP } from "@/constants/routes";
 import { AuthContext } from "@/context/AuthContext";
 import { useAuthFormHandler } from "@/hooks/useAuthFormHandler";
 import { AmplifyAuthClient } from "@/lib/amplifyAuthClient";
@@ -22,15 +27,15 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 function mapAmplifyUserToAuthUserState(
-  user: any,
+  user: unknown,
   attributes: Record<string, string>
 ): typeof InitialAuthUser {
   return {
-    id: user?.userId || "",
+    id: (user as any)?.userId || "",
     userType: "user", // or derive from attributes if available
     name: attributes?.name || "",
-    email: attributes?.email || user?.username || "",
-    username: user?.username || attributes?.preferred_username || "",
+    email: attributes?.email || (user as any)?.username || "",
+    username: (user as any)?.username || attributes?.preferred_username || "",
     country: attributes?.country || "",
     instagram: attributes?.instagram || "",
     twitter: attributes?.twitter || "",
@@ -96,27 +101,43 @@ export default function SignInForm() {
   };
 
   return (
-    <FormWrapper form={form} onSubmit={onSubmit}>
-      <FormInput
-        name="email"
-        label={FORM_LABELS.email}
-        type={INPUT_TYPES.email}
-        autoComplete={AUTO_COMPLETE.email}
-      />
-      <FormInput
-        name="password"
-        label={FORM_LABELS.password}
-        type={INPUT_TYPES.password}
-        autoComplete={AUTO_COMPLETE.currentPassword}
-      />
-      <FormError message={formError} />
-      <button
-        type="submit"
-        className="w-full mt-4 btn btn-primary"
-        disabled={isLoading}
-      >
-        {isLoading ? "Signing In..." : SIGN_IN.buttonText}
-      </button>
-    </FormWrapper>
+    <FormCard
+      title={SIGN_IN.pageTitle}
+      description={SIGN_IN.pageDescription}
+      error={formError}
+      topLink={{
+        href: ROUTE_FORGOT_PASSWORD,
+        name: LINK_TEXT.forgotPassword,
+      }}
+      bottomLink={{
+        href: ROUTE_SIGN_UP,
+        name: LINK_TEXT.signUp,
+        message: LINK_MESSAGES.dontHaveAccount,
+      }}
+    >
+      <FormWrapper form={form} onSubmit={onSubmit}>
+        <div className="space-y-4">
+          <FormInput
+            name="email"
+            label={FORM_LABELS.email}
+            type={INPUT_TYPES.email}
+            autoComplete={AUTO_COMPLETE.email}
+          />
+          <FormInput
+            name="password"
+            label={FORM_LABELS.password}
+            type={INPUT_TYPES.password}
+            autoComplete={AUTO_COMPLETE.currentPassword}
+          />
+          <button
+            type="submit"
+            className="w-full btn btn-primary"
+            disabled={isLoading}
+          >
+            {isLoading ? LOADING_TEXT.signingIn : SIGN_IN.buttonText}
+          </button>
+        </div>
+      </FormWrapper>
+    </FormCard>
   );
 }

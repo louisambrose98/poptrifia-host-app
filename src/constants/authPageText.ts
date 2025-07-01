@@ -21,6 +21,41 @@ export const INPUT_TYPES = {
   text: "text",
 } as const;
 
+// Link text constants
+export const LINK_TEXT = {
+  forgotPassword: "Forgot your password?",
+  signUp: "Sign up",
+  signIn: "Sign in",
+  backToSignIn: "Back to sign in",
+  signUpWithDifferentEmail: "Sign up with a different email",
+  resendCode: "Resend code",
+  resendCodeButton: "Resend Code",
+} as const;
+
+// Link message constants
+export const LINK_MESSAGES = {
+  dontHaveAccount: "Don't have an account?",
+  alreadyHaveAccount: "Already have an account?",
+  rememberPassword: "Remember your password?",
+  didntReceiveCode: "Didn't receive the code?",
+} as const;
+
+// Loading text constants
+export const LOADING_TEXT = {
+  signingIn: "Signing In...",
+  creatingAccount: "Creating Account...",
+  sendingResetCode: "Sending Reset Code...",
+  resettingPassword: "Resetting Password...",
+  confirmingEmail: "Confirming Email...",
+  sending: "Sending...",
+} as const;
+
+// Success message constants
+export const SUCCESS_MESSAGES = {
+  passwordResetSuccess: "You can now sign in with your new password.",
+  emailConfirmedSuccess: "You can now sign in to your account.",
+} as const;
+
 // Sign In Page
 export const SIGN_IN = {
   pageTitle: "Sign In",

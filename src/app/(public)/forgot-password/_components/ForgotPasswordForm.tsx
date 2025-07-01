@@ -5,6 +5,12 @@ import {
   ACTION_AUTH_STOP_LOADING,
 } from "@/actions/AuthActions";
 import { FormError, FormInput, FormWrapper } from "@/components/forms";
+import {
+  AUTO_COMPLETE,
+  FORGOT_PASSWORD,
+  FORM_LABELS,
+  INPUT_TYPES,
+} from "@/constants/authPageText";
 import { AuthContext } from "@/context/AuthContext";
 import { AmplifyAuthClient } from "@/lib/amplifyAuthClient";
 import { forgotPasswordSchema } from "@/schema/auth";
@@ -27,15 +33,33 @@ export default function ForgotPasswordForm() {
     setIsSuccess(false);
     authDispatch({ type: ACTION_AUTH_START_LOADING });
     try {
-      const result = await AmplifyAuthClient.forgotPassword(values.email);
-      if (result.isPasswordReset) {
-        setIsSuccess(true);
-      } else {
-        setFormError("Failed to send reset code. Please try again.");
-      }
+      await AmplifyAuthClient.forgotPassword(values.email);
+      setIsSuccess(true);
     } catch (err: unknown) {
       const errorMessage =
-        err instanceof Error ? err.message : "Failed to send reset code";
+        err instanceof Error
+          ? err.message
+          : FORGOT_PASSWORD.errorMessages.failedToSend;
+      setFormError(errorMessage);
+    } finally {
+      authDispatch({ type: ACTION_AUTH_STOP_LOADING });
+    }
+  };
+
+  const handleResendCode = async () => {
+    const email = form.getValues("email");
+    if (!email) return;
+
+    setFormError(undefined);
+    authDispatch({ type: ACTION_AUTH_START_LOADING });
+    try {
+      await AmplifyAuthClient.forgotPassword(email);
+      // Show success message or toast
+    } catch (err: unknown) {
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : FORGOT_PASSWORD.errorMessages.failedToSend;
       setFormError(errorMessage);
     } finally {
       authDispatch({ type: ACTION_AUTH_STOP_LOADING });
@@ -45,19 +69,17 @@ export default function ForgotPasswordForm() {
   if (isSuccess) {
     return (
       <div className="text-center">
-        <h3 className="text-lg font-semibold mb-2">Check your email</h3>
+        <h3 className="text-lg font-semibold mb-2">
+          {FORGOT_PASSWORD.successMessages.title}
+        </h3>
         <p className="text-gray-600 mb-4">
-          We've sent a password reset code to your email address. Please check
-          your inbox and use the code to reset your password.
+          {FORGOT_PASSWORD.successMessages.description}
         </p>
         <button
-          onClick={() => {
-            setIsSuccess(false);
-            form.reset();
-          }}
+          onClick={handleResendCode}
           className="text-blue-600 hover:text-blue-800 underline"
         >
-          Send another code
+          {FORGOT_PASSWORD.secondaryButton}
         </button>
       </div>
     );
@@ -65,10 +87,15 @@ export default function ForgotPasswordForm() {
 
   return (
     <FormWrapper form={form} onSubmit={onSubmit}>
-      <FormInput name="email" label="Email" type="email" autoComplete="email" />
+      <FormInput
+        name="email"
+        label={FORM_LABELS.email}
+        type={INPUT_TYPES.email}
+        autoComplete={AUTO_COMPLETE.email}
+      />
       <FormError message={formError} />
       <button type="submit" className="w-full mt-4 btn btn-primary">
-        Send Reset Code
+        {FORGOT_PASSWORD.buttonText}
       </button>
     </FormWrapper>
   );

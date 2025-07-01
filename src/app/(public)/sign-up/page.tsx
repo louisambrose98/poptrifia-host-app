@@ -1,18 +1,21 @@
 import AuthPageLayout from "@/components/AuthPageLayout";
+import { SIGN_UP } from "@/constants/authPageText";
+import { METADATA_SIGN_UP } from "@/constants/metadata";
+import { Metadata } from "next";
 import SignUpForm from "./_components/SignUpForm";
 
-export default function SignUp() {
+export const metadata: Metadata = {
+  title: METADATA_SIGN_UP.title,
+  description: METADATA_SIGN_UP.description,
+};
+
+export default function SignUpPage() {
   return (
     <AuthPageLayout
-      title="Sign Up"
-      description="Create a new Poptrifia account."
+      title={SIGN_UP.pageTitle}
+      description={SIGN_UP.pageDescription}
     >
       <SignUpForm />
     </AuthPageLayout>
   );
 }
-
-export const metadata = {
-  title: "Sign Up | Poptrifia",
-  description: "Create a new Poptrifia account and join the fun!",
-};

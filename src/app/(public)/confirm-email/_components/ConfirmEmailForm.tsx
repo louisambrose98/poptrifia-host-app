@@ -5,6 +5,12 @@ import {
   ACTION_AUTH_STOP_LOADING,
 } from "@/actions/AuthActions";
 import { FormError, FormInput, FormWrapper } from "@/components/forms";
+import {
+  AUTO_COMPLETE,
+  CONFIRM_EMAIL,
+  FORM_LABELS,
+  INPUT_TYPES,
+} from "@/constants/authPageText";
 import { AuthContext } from "@/context/AuthContext";
 import { AmplifyAuthClient } from "@/lib/amplifyAuthClient";
 import { confirmEmailSchema } from "@/schema/auth";
@@ -27,26 +33,33 @@ export default function ConfirmEmailForm() {
     setIsSuccess(false);
     authDispatch({ type: ACTION_AUTH_START_LOADING });
     try {
-      const result = await AmplifyAuthClient.confirmSignUp(
-        values.email,
-        values.code
-      );
-      if (result.isSignUpComplete) {
-        setIsSuccess(true);
-        // If auto sign-in is enabled, handle it
-        if (result.nextStep?.signUpStep === "COMPLETE_AUTO_SIGN_IN") {
-          try {
-            await AmplifyAuthClient.autoSignIn();
-          } catch (autoSignInError: unknown) {
-            console.warn("Auto sign-in failed:", autoSignInError);
-          }
-        }
-      } else {
-        setFormError("Failed to confirm email. Please try again.");
-      }
+      await AmplifyAuthClient.confirmSignUp(values.email, values.code);
+      setIsSuccess(true);
     } catch (err: unknown) {
       const errorMessage =
-        err instanceof Error ? err.message : "Failed to confirm email";
+        err instanceof Error
+          ? err.message
+          : CONFIRM_EMAIL.errorMessages.failedToConfirm;
+      setFormError(errorMessage);
+    } finally {
+      authDispatch({ type: ACTION_AUTH_STOP_LOADING });
+    }
+  };
+
+  const handleResendCode = async () => {
+    const email = form.getValues("email");
+    if (!email) return;
+
+    setFormError(undefined);
+    authDispatch({ type: ACTION_AUTH_START_LOADING });
+    try {
+      await AmplifyAuthClient.resendSignUpCode(email);
+      // Show success message or toast
+    } catch (err: unknown) {
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : CONFIRM_EMAIL.errorMessages.failedToConfirm;
       setFormError(errorMessage);
     } finally {
       authDispatch({ type: ACTION_AUTH_STOP_LOADING });
@@ -57,16 +70,16 @@ export default function ConfirmEmailForm() {
     return (
       <div className="text-center">
         <h3 className="text-lg font-semibold mb-2">
-          Email Confirmed Successfully
+          {CONFIRM_EMAIL.successMessages.title}
         </h3>
         <p className="text-gray-600 mb-4">
-          Your email has been confirmed. You can now sign in to your account.
+          {CONFIRM_EMAIL.successMessages.description}
         </p>
         <a
           href="/sign-in"
           className="text-blue-600 hover:text-blue-800 underline"
         >
-          Go to Sign In
+          {CONFIRM_EMAIL.secondaryButton}
         </a>
       </div>
     );
@@ -74,16 +87,28 @@ export default function ConfirmEmailForm() {
 
   return (
     <FormWrapper form={form} onSubmit={onSubmit}>
-      <FormInput name="email" label="Email" type="email" autoComplete="email" />
+      <FormInput
+        name="email"
+        label={FORM_LABELS.email}
+        type={INPUT_TYPES.email}
+        autoComplete={AUTO_COMPLETE.email}
+      />
       <FormInput
         name="code"
-        label="Confirmation Code"
-        type="text"
-        autoComplete="one-time-code"
+        label={FORM_LABELS.confirmationCode}
+        type={INPUT_TYPES.text}
+        autoComplete={AUTO_COMPLETE.oneTimeCode}
       />
       <FormError message={formError} />
       <button type="submit" className="w-full mt-4 btn btn-primary">
-        Confirm Email
+        {CONFIRM_EMAIL.buttonText}
+      </button>
+      <button
+        type="button"
+        onClick={handleResendCode}
+        className="w-full mt-2 text-blue-600 hover:text-blue-800 underline"
+      >
+        Resend Code
       </button>
     </FormWrapper>
   );

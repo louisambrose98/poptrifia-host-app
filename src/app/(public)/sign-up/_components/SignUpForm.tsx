@@ -5,6 +5,12 @@ import {
   ACTION_AUTH_STOP_LOADING,
 } from "@/actions/AuthActions";
 import { FormError, FormInput, FormWrapper } from "@/components/forms";
+import {
+  AUTO_COMPLETE,
+  FORM_LABELS,
+  INPUT_TYPES,
+  SIGN_UP,
+} from "@/constants/authPageText";
 import { AuthContext } from "@/context/AuthContext";
 import { AmplifyAuthClient } from "@/lib/amplifyAuthClient";
 import { signUpSchema } from "@/schema/auth";
@@ -47,7 +53,7 @@ export default function SignUpForm() {
       }
     } catch (err: unknown) {
       const errorMessage =
-        err instanceof Error ? err.message : "Failed to sign up";
+        err instanceof Error ? err.message : SIGN_UP.errorMessages.default;
       setFormError(errorMessage);
     } finally {
       authDispatch({ type: ACTION_AUTH_STOP_LOADING });
@@ -57,10 +63,11 @@ export default function SignUpForm() {
   if (isSuccess) {
     return (
       <div className="text-center">
-        <h3 className="text-lg font-semibold mb-2">Check your email</h3>
+        <h3 className="text-lg font-semibold mb-2">
+          {SIGN_UP.successMessages.title}
+        </h3>
         <p className="text-gray-600 mb-4">
-          We've sent a confirmation code to your email address. Please check
-          your inbox and confirm your account.
+          {SIGN_UP.successMessages.description}
         </p>
         <button
           onClick={() => {
@@ -69,7 +76,7 @@ export default function SignUpForm() {
           }}
           className="text-blue-600 hover:text-blue-800 underline"
         >
-          Sign up with a different email
+          {SIGN_UP.secondaryButton}
         </button>
       </div>
     );
@@ -77,22 +84,27 @@ export default function SignUpForm() {
 
   return (
     <FormWrapper form={form} onSubmit={onSubmit}>
-      <FormInput name="email" label="Email" type="email" autoComplete="email" />
+      <FormInput
+        name="email"
+        label={FORM_LABELS.email}
+        type={INPUT_TYPES.email}
+        autoComplete={AUTO_COMPLETE.email}
+      />
       <FormInput
         name="password"
-        label="Password"
-        type="password"
-        autoComplete="new-password"
+        label={FORM_LABELS.password}
+        type={INPUT_TYPES.password}
+        autoComplete={AUTO_COMPLETE.newPassword}
       />
       <FormInput
         name="confirmPassword"
-        label="Confirm Password"
-        type="password"
-        autoComplete="new-password"
+        label={FORM_LABELS.confirmPassword}
+        type={INPUT_TYPES.password}
+        autoComplete={AUTO_COMPLETE.newPassword}
       />
       <FormError message={formError} />
       <button type="submit" className="w-full mt-4 btn btn-primary">
-        Sign Up
+        {SIGN_UP.buttonText}
       </button>
     </FormWrapper>
   );

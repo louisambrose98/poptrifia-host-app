@@ -7,6 +7,12 @@ import {
   ACTION_AUTH_UNAUTHENTICATED,
 } from "@/actions/AuthActions";
 import { FormError, FormInput, FormWrapper } from "@/components/forms";
+import {
+  AUTO_COMPLETE,
+  FORM_LABELS,
+  INPUT_TYPES,
+  SIGN_IN,
+} from "@/constants/authPageText";
 import { AuthContext } from "@/context/AuthContext";
 import { AmplifyAuthClient } from "@/lib/amplifyAuthClient";
 import { signInSchema } from "@/schema/auth";
@@ -71,14 +77,12 @@ export default function SignInForm() {
           payload: { user: mappedUser },
         });
       } else {
-        setFormError(
-          "Additional authentication steps required. Please check your email or phone."
-        );
+        setFormError(SIGN_IN.errorMessages.additionalSteps);
         authDispatch({ type: ACTION_AUTH_UNAUTHENTICATED });
       }
     } catch (err: unknown) {
       const errorMessage =
-        err instanceof Error ? err.message : "Failed to sign in";
+        err instanceof Error ? err.message : SIGN_IN.errorMessages.default;
       setFormError(errorMessage);
       authDispatch({ type: ACTION_AUTH_UNAUTHENTICATED });
     } finally {
@@ -88,16 +92,21 @@ export default function SignInForm() {
 
   return (
     <FormWrapper form={form} onSubmit={onSubmit}>
-      <FormInput name="email" label="Email" type="email" autoComplete="email" />
+      <FormInput
+        name="email"
+        label={FORM_LABELS.email}
+        type={INPUT_TYPES.email}
+        autoComplete={AUTO_COMPLETE.email}
+      />
       <FormInput
         name="password"
-        label="Password"
-        type="password"
-        autoComplete="current-password"
+        label={FORM_LABELS.password}
+        type={INPUT_TYPES.password}
+        autoComplete={AUTO_COMPLETE.currentPassword}
       />
       <FormError message={formError} />
       <button type="submit" className="w-full mt-4 btn btn-primary">
-        Sign In
+        {SIGN_IN.buttonText}
       </button>
     </FormWrapper>
   );

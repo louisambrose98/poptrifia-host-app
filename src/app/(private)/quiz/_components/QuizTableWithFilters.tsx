@@ -1,12 +1,13 @@
 "use client";
 import { DUMMY_QUIZZES } from "@/constants/dummy";
+import { EMPTY } from "@/constants/general";
 import { getString } from "@/lib/guards";
 import { useMemo, useState } from "react";
 import QuizPanel from "./QuizPanel";
 import QuizTable from "./QuizTable";
 
 const QuizTableWithFilters = () => {
-  const [roomSearch, setRoomSearch] = useState("");
+  const [roomSearch, setRoomSearch] = useState(EMPTY);
   const [status, setStatus] = useState<string | null>(null);
   const [date, setDate] = useState<string | null>(null);
 

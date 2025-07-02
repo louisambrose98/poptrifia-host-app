@@ -1,10 +1,13 @@
-export const QUIZ_PAGE_SIZE = 10;
-export const QUIZ_TITLE = "Quiz";
-export const QUIZZES_TITLE = "Quizzes";
-export const QUIZ_DESCRIPTION = "Manage and view all quizzes in your database.";
 export const QUIZ_STATUS_ENUM = ["NEW", "NEXT", "HOLD", "DONE"];
 
-export const QUIZ_COLUMNS = {
+export const QUIZ_PANEL = {
+  searchPlaceholder: "Search Room...",
+  filterStatus: "Status",
+  filterReset: "Reset Filters",
+  createButton: "Create New Quiz",
+};
+
+const QUIZ_COLUMNS = {
   name: {
     label: "Name",
     accessor: "name",
@@ -41,4 +44,13 @@ export const QUIZ_COLUMNS = {
     label: "End Time",
     accessor: "endDateTime",
   },
+};
+
+export const QUIZ_TABLE = {
+  columns: QUIZ_COLUMNS,
+  title: "Quizzes",
+  description: "Manage and view all quizzes in your database.",
+  pageSize: 10,
+  winnerWon: "Won",
+  winnerLost: "Lost",
 };

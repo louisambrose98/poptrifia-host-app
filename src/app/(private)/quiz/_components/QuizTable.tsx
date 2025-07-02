@@ -3,12 +3,7 @@ import DataTable from "@/components/DataTable";
 import ItemBadge from "@/components/ItemBadge";
 import TableText from "@/components/TableText";
 import { ZERO } from "@/constants/general";
-import {
-  QUIZZES_TITLE,
-  QUIZ_COLUMNS,
-  QUIZ_DESCRIPTION,
-  QUIZ_PAGE_SIZE,
-} from "@/constants/quiz";
+import { QUIZ_TABLE } from "@/constants/quiz";
 import { getDateOnly, getHourAndMinutes } from "@/lib/datetime";
 import { getNumber, isValidString } from "@/lib/guards";
 import { useRouter } from "next/navigation";
@@ -28,50 +23,50 @@ type Quiz = {
 };
 
 const getWinner = (winner: string | null) => {
-  return isValidString(winner) ? "Won" : "Lost";
+  return isValidString(winner) ? QUIZ_TABLE.winnerWon : QUIZ_TABLE.winnerLost;
 };
 
 const columns = [
   {
-    ...QUIZ_COLUMNS.name,
+    ...QUIZ_TABLE.columns.name,
     render: (row: Quiz) => <TableText title={row.name} />,
   },
   {
-    ...QUIZ_COLUMNS.room,
+    ...QUIZ_TABLE.columns.room,
     render: (row: Quiz) => <ItemBadge type="room" value={row.room} />,
   },
   {
-    ...QUIZ_COLUMNS.winner,
+    ...QUIZ_TABLE.columns.winner,
     render: (row: Quiz) => (
       <ItemBadge type="winner" value={getWinner(row.winner)} />
     ),
   },
   {
-    ...QUIZ_COLUMNS.players,
+    ...QUIZ_TABLE.columns.players,
     render: (row: Quiz) => (
       <TableText title={getNumber(row.numPlayers, ZERO)} />
     ),
   },
   {
-    ...QUIZ_COLUMNS.questions,
+    ...QUIZ_TABLE.columns.questions,
     render: (row: Quiz) => <TableText title={row.numQuestions} />,
   },
   {
-    ...QUIZ_COLUMNS.quizDate,
+    ...QUIZ_TABLE.columns.quizDate,
     render: (row: Quiz) => <TableText title={getDateOnly(row.startDateTime)} />,
   },
   {
-    ...QUIZ_COLUMNS.status,
+    ...QUIZ_TABLE.columns.status,
     render: (row: Quiz) => <ItemBadge type="status" value={row.status} />,
   },
   {
-    ...QUIZ_COLUMNS.startTime,
+    ...QUIZ_TABLE.columns.startTime,
     render: (row: Quiz) => (
       <TableText title={getHourAndMinutes(row.startDateTime)} />
     ),
   },
   {
-    ...QUIZ_COLUMNS.endTime,
+    ...QUIZ_TABLE.columns.endTime,
     render: (row: Quiz) => (
       <TableText title={getHourAndMinutes(row.endDateTime)} />
     ),
@@ -86,11 +81,11 @@ const QuizTable = ({ data }: Props) => {
   const router = useRouter();
   return (
     <DataTable
-      title={QUIZZES_TITLE}
-      description={QUIZ_DESCRIPTION}
+      title={QUIZ_TABLE.title}
+      description={QUIZ_TABLE.description}
       columns={columns}
       data={data}
-      pageSize={QUIZ_PAGE_SIZE}
+      pageSize={QUIZ_TABLE.pageSize}
       total={data.length}
       getRowId={(row: Quiz) => row.id}
       onRowClick={(row: Quiz) => router.push(`/quiz/${row.id}`)}

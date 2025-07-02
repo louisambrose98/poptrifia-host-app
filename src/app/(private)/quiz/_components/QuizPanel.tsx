@@ -4,7 +4,7 @@ import FilterDropdown from "@/components/FilterDropdown";
 import SearchInput from "@/components/SearchInput";
 import { Button } from "@/components/ui/button";
 import { EMPTY } from "@/constants/general";
-import { QUIZ_STATUS_ENUM } from "@/constants/quiz";
+import { QUIZ_PANEL, QUIZ_STATUS_ENUM } from "@/constants/quiz";
 import { getString } from "@/lib/guards";
 import { useRouter } from "next/navigation";
 
@@ -29,8 +29,8 @@ const QuizPanel = ({
   return (
     <div className="flex flex-wrap gap-4 mb-6 items-center w-full justify-between">
       <div className="flex gap-4 items-center">
-        <span className="font-semibold text-lg mr-4">Quizzes</span>
         <SearchInput
+          placeholder={QUIZ_PANEL.searchPlaceholder}
           value={roomSearch}
           onChange={(e) => setRoomSearch(e.target.value)}
           className="w-48"
@@ -41,7 +41,7 @@ const QuizPanel = ({
           className="border rounded px-3 py-2 text-sm"
         />
         <FilterDropdown
-          label="Status"
+          label={QUIZ_PANEL.filterStatus}
           options={QUIZ_STATUS_ENUM}
           value={status}
           onChange={setStatus}
@@ -55,11 +55,13 @@ const QuizPanel = ({
               setDate(null);
             }}
           >
-            Reset Filters
+            {QUIZ_PANEL.filterReset}
           </Button>
         )}
       </div>
-      <Button onClick={() => router.push("/quiz/add")}>Create New Quiz</Button>
+      <Button onClick={() => router.push("/quiz/add")}>
+        {QUIZ_PANEL.createButton}
+      </Button>
     </div>
   );
 };

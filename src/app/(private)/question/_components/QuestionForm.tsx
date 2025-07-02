@@ -1,4 +1,5 @@
 "use client";
+
 import FormButton from "@/components/FormButton";
 import FormCard from "@/components/FormCard";
 import { FormInput } from "@/components/FormInput";
@@ -7,6 +8,7 @@ import { FormWrapper } from "@/components/FormWrapper";
 import { Button } from "@/components/ui/button";
 import { CATEGORY_ENUM, DIFFICULTY_ENUM } from "@/constants/questions";
 import { useAuthFormHandler } from "@/hooks/useAuthFormHandler";
+import { isValidString } from "@/lib/guards";
 import { QuestionFormSchema } from "@/schema";
 import { QuestionFormData } from "@/schema/question";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,25 +16,35 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-const AddQuestionForm = () => {
+type Props = {
+  title: string;
+  description: string;
+  buttonText: string;
+  defaultValues: QuestionFormData;
+  id?: string | string[];
+  successTitle: string;
+  successDescription: string;
+  successButtonText: string;
+  leaveButtonText: string;
+};
+
+const QuestionForm = ({
+  title,
+  description,
+  buttonText,
+  defaultValues,
+  id,
+  successTitle,
+  successDescription,
+  successButtonText,
+  leaveButtonText,
+}: Props) => {
   const router = useRouter();
   const [isSuccess, setIsSuccess] = useState(false);
 
   const form = useForm<QuestionFormData>({
     resolver: zodResolver(QuestionFormSchema),
-    defaultValues: {
-      question: "",
-      optionOne: "",
-      optionTwo: "",
-      optionThree: "",
-      optionFour: "",
-      answer: "",
-      timer: 30,
-      score: 10,
-      questionType: "multiple-choice",
-      category: CATEGORY_ENUM[0],
-      difficulty: DIFFICULTY_ENUM[0],
-    },
+    defaultValues,
   });
 
   const { handleSubmit, formError, isLoading } = useAuthFormHandler({
@@ -59,21 +71,30 @@ const AddQuestionForm = () => {
     setIsSuccess(false);
   };
 
+  const goBack = () => {
+    router.push("/question");
+  };
+
+  const navToQuestionId = (id: string) => {
+    router.push(`/question/${id}`);
+  };
+
+  const successButtonOnClick = () => {
+    return isValidString(id) ? navToQuestionId(id) : resetForm();
+  };
+
   if (isSuccess) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
         <FormCard
-          title="Question Created!"
-          description="Your new question has been added."
+          title={successTitle}
+          description={successDescription}
           showSubmitButton={false}
         >
           <div className="flex gap-4 mt-4">
-            <Button onClick={resetForm}>Create Another</Button>
-            <Button
-              variant="secondary"
-              onClick={() => router.push("/question")}
-            >
-              Return to Questions
+            <Button onClick={successButtonOnClick}>{successButtonText}</Button>
+            <Button variant="secondary" onClick={goBack}>
+              {leaveButtonText}
             </Button>
           </div>
         </FormCard>
@@ -82,11 +103,7 @@ const AddQuestionForm = () => {
   }
 
   return (
-    <FormCard
-      title="Add New Question"
-      description="Fill out the form to add a new question."
-      error={formError}
-    >
+    <FormCard title={title} description={description} error={formError}>
       <FormWrapper form={form} onSubmit={onSubmit}>
         <div className="space-y-4">
           <FormInput
@@ -137,11 +154,11 @@ const AddQuestionForm = () => {
             }))}
           />
 
-          <FormButton isLoading={isLoading} buttonText="Create Question" />
+          <FormButton isLoading={isLoading} buttonText={buttonText} />
         </div>
       </FormWrapper>
     </FormCard>
   );
 };
 
-export default AddQuestionForm;
+export default QuestionForm;

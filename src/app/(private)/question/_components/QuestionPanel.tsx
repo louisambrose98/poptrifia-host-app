@@ -1,10 +1,10 @@
 "use client";
 import FilterDropdown from "@/components/FilterDropdown";
 import { Button } from "@/components/ui/button";
+import { EMPTY } from "@/constants/general";
+import { CATEGORY_ENUM, DIFFICULTY_ENUM } from "@/constants/questions";
 
 type Props = {
-  categoryOptions: string[];
-  difficultyOptions: string[];
   category: string;
   setCategory: (value: string | null) => void;
   difficulty: string;
@@ -12,16 +12,14 @@ type Props = {
 };
 
 const QuestionPanel = ({
-  categoryOptions,
-  difficultyOptions,
   category,
   setCategory,
   difficulty,
   setDifficulty,
 }: Props) => {
   const onReset = () => {
-    setCategory("");
-    setDifficulty("");
+    setCategory(EMPTY);
+    setDifficulty(EMPTY);
   };
 
   return (
@@ -29,13 +27,13 @@ const QuestionPanel = ({
       <span className="font-semibold text-lg mr-4">Questions</span>
       <FilterDropdown
         label="Category"
-        options={categoryOptions}
+        options={CATEGORY_ENUM}
         value={category}
         onChange={setCategory}
       />
       <FilterDropdown
         label="Difficulty"
-        options={difficultyOptions}
+        options={DIFFICULTY_ENUM}
         value={difficulty}
         onChange={setDifficulty}
       />

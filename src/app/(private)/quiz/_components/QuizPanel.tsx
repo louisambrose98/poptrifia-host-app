@@ -3,6 +3,9 @@ import DateInput from "@/components/DateInput";
 import FilterDropdown from "@/components/FilterDropdown";
 import SearchInput from "@/components/SearchInput";
 import { Button } from "@/components/ui/button";
+import { EMPTY } from "@/constants/general";
+import { QUIZ_STATUS_ENUM } from "@/constants/quiz";
+import { getString } from "@/lib/guards";
 
 type Props = {
   roomSearch: string;
@@ -11,7 +14,6 @@ type Props = {
   setDate: (value: string | null) => void;
   status: string;
   setStatus: (value: string | null) => void;
-  StatusEnum: string[];
 };
 
 const QuizPanel = ({
@@ -21,7 +23,6 @@ const QuizPanel = ({
   setDate,
   status,
   setStatus,
-  StatusEnum,
 }: Props) => {
   return (
     <div className="flex flex-wrap gap-4 mb-6 items-center">
@@ -32,13 +33,13 @@ const QuizPanel = ({
         className="w-48"
       />
       <DateInput
-        value={date || ""}
+        value={getString(date)}
         onChange={(e) => setDate(e.target.value || null)}
         className="border rounded px-3 py-2 text-sm"
       />
       <FilterDropdown
         label="Status"
-        options={StatusEnum}
+        options={QUIZ_STATUS_ENUM}
         value={status}
         onChange={setStatus}
       />
@@ -46,7 +47,7 @@ const QuizPanel = ({
         <Button
           variant="destructive"
           onClick={() => {
-            setRoomSearch("");
+            setRoomSearch(EMPTY);
             setStatus(null);
             setDate(null);
           }}

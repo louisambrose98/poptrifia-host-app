@@ -1,16 +1,7 @@
 "use client";
 
 import DataTable from "@/components/DataTable";
-
-const previousResults = [
-  { id: 1, username: "karenon", country: "IE", score: 13, time: 62.769 },
-  { id: 2, username: "david", country: "ZW", score: 4, time: 81.23 },
-  { id: 3, username: "louis_ambrose", country: "ZW", score: 4, time: 81.23 },
-  { id: 4, username: "syyyy", country: "IE", score: 4, time: 81.23 },
-  { id: 5, username: "kyran", country: "CA", score: 4, time: 81.23 },
-  { id: 6, username: "gs2025", country: "ZW", score: 4, time: 81.23 },
-  { id: 7, username: "sean_cmon", country: "ZW", score: 4, time: 81.23 },
-];
+import { DUMMY_PREV_RESULTS } from "@/constants/dummy";
 
 const PreviousResultsTable = () => {
   return (
@@ -27,9 +18,9 @@ const PreviousResultsTable = () => {
             render: (row) => row.time.toFixed(2),
           },
         ]}
-        data={previousResults}
+        data={DUMMY_PREV_RESULTS}
         pageSize={5}
-        total={previousResults.length}
+        total={DUMMY_PREV_RESULTS.length}
         getRowId={(row, idx) => row.username + idx}
         onRowClick={(row) => console.log(`/user/${row.username}`)}
       />

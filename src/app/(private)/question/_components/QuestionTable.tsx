@@ -2,6 +2,11 @@
 import DataTable from "@/components/DataTable";
 import ItemBadge from "@/components/ItemBadge";
 import TableText from "@/components/TableText";
+import {
+  QUESTIONS_COLUMNS,
+  QUESTIONS_DESCRIPTION,
+  QUESTIONS_TITLE,
+} from "@/constants/questions";
 
 type Question = {
   id: string;
@@ -26,13 +31,11 @@ type Question = {
 
 const columns = [
   {
-    label: "Question",
-    accessor: "question",
+    ...QUESTIONS_COLUMNS.question,
     render: (row: Question) => <TableText title={row.question} />,
   },
   {
-    label: "Options",
-    accessor: "options",
+    ...QUESTIONS_COLUMNS.options,
     render: (row: Question) => (
       <TableText
         className="max-w-xs truncate text-muted-foreground"
@@ -41,26 +44,22 @@ const columns = [
     ),
   },
   {
-    label: "Answer",
-    accessor: "answer",
+    ...QUESTIONS_COLUMNS.answer,
     render: (row: Question) => <TableText title={row.answer} />,
   },
   {
-    label: "Category",
-    accessor: "category",
+    ...QUESTIONS_COLUMNS.category,
     render: (row: Question) => (
       <ItemBadge type="category" value={row.category} />
     ),
   },
   {
-    label: "Difficulty",
-    accessor: "difficulty",
+    ...QUESTIONS_COLUMNS.difficulty,
     render: (row: Question) => (
       <ItemBadge type="difficulty" value={row.difficulty} />
     ),
   },
 ];
-
 type Props = {
   data: Question[];
 };
@@ -68,13 +67,13 @@ type Props = {
 const QuestionTable = ({ data }: Props) => {
   return (
     <DataTable
+      title={QUESTIONS_TITLE}
+      description={QUESTIONS_DESCRIPTION}
       columns={columns}
       data={data}
       pageSize={10}
       total={data.length}
       getRowId={(row: Question) => row.id}
-      title="Questions"
-      description="Manage and view all quiz questions in your database"
     />
   );
 };

@@ -54,8 +54,7 @@ export const getPosition = (position: number): string =>
 export const getNumber = <T>(ret: T, val?: unknown) =>
   isValidNumber(val) ? val : ret;
 
-export const getString = <T>(ret: T, val?: unknown) =>
-  isValidString(val) ? val : ret;
+export const getString = (val?: unknown) => (isValidString(val) ? val : EMPTY);
 
 export const toTitleCase = (input: string): string => {
   if (!isValidString(input)) return EMPTY;

@@ -1,7 +1,7 @@
-import LeaderboardTable from "./question/_components/LeaderboardTable";
-import PreviousQuizTable from "./question/_components/PreviousQuizTable";
-import PreviousResultsTable from "./question/_components/PreviousResultsTable";
-import StatusGrid from "./question/_components/StatusGrid";
+import LeaderboardTable from "./_components/LeaderboardTable";
+import PreviousQuizTable from "./_components/PreviousQuizTable";
+import PreviousResultsTable from "./_components/PreviousResultsTable";
+import StatusGrid from "./_components/StatusGrid";
 
 export default function DashboardPage() {
   return (

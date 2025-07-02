@@ -1,5 +1,7 @@
 "use client";
 import DataTable from "@/components/DataTable";
+import ItemBadge from "@/components/ItemBadge";
+import TableText from "@/components/TableText";
 
 type Question = {
   id: string;
@@ -26,11 +28,7 @@ const columns = [
   {
     label: "Question",
     accessor: "question",
-    render: (row: Question) => (
-      <div className="max-w-xs truncate" title={row.question}>
-        {row.question}
-      </div>
-    ),
+    render: (row: Question) => <TableText title={row.question} />,
   },
   {
     label: "Options",
@@ -47,64 +45,21 @@ const columns = [
   {
     label: "Answer",
     accessor: "answer",
-    render: (row: Question) => (
-      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
-        {row.answer}
-      </span>
-    ),
-  },
-  {
-    label: "Timer",
-    accessor: "timer",
-    render: (row: Question) => (
-      <span className="text-sm text-muted-foreground">{row.timer}s</span>
-    ),
-  },
-  {
-    label: "Score",
-    accessor: "score",
-    render: (row: Question) => (
-      <span className="font-medium text-foreground">{row.score}</span>
-    ),
-  },
-  {
-    label: "Type",
-    accessor: "type",
-    render: (row: Question) => (
-      <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-secondary/10 text-secondary-foreground border border-secondary/20">
-        {row.type}
-      </span>
-    ),
+    render: (row: Question) => <TableText title={row.answer} />,
   },
   {
     label: "Category",
     accessor: "category",
     render: (row: Question) => (
-      <span className="text-sm text-muted-foreground">{row.category}</span>
+      <ItemBadge type="category" value={row.category} />
     ),
   },
   {
     label: "Difficulty",
     accessor: "difficulty",
-    render: (row: Question) => {
-      const difficultyColors = {
-        easy: "bg-green-100 text-green-800 border-green-200",
-        medium: "bg-yellow-100 text-yellow-800 border-yellow-200",
-        hard: "bg-red-100 text-red-800 border-red-200",
-      };
-      const colorClass =
-        difficultyColors[
-          row.difficulty.toLowerCase() as keyof typeof difficultyColors
-        ] || "bg-gray-100 text-gray-800 border-gray-200";
-
-      return (
-        <span
-          className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${colorClass}`}
-        >
-          {row.difficulty}
-        </span>
-      );
-    },
+    render: (row: Question) => (
+      <ItemBadge type="difficulty" value={row.difficulty} />
+    ),
   },
 ];
 

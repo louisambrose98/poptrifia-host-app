@@ -3,6 +3,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -34,6 +35,7 @@ interface DataTableProps<T> {
   initialPage?: number;
   title?: string;
   description?: string;
+  footer?: React.ReactNode;
 }
 
 export function DataTable<T>({
@@ -47,6 +49,7 @@ export function DataTable<T>({
   initialPage = 1,
   title,
   description,
+  footer,
 }: DataTableProps<T>) {
   const [page, setPage] = useState(initialPage);
   const totalPages = Math.ceil(total / pageSize);
@@ -140,13 +143,25 @@ export function DataTable<T>({
                     >
                       {col.render
                         ? col.render(row)
-                        : (row as any)[col.accessor]}
+                        : typeof col.accessor === "string" ||
+                          typeof col.accessor === "number"
+                        ? ((row as Record<string | number, unknown>)[
+                            col.accessor
+                          ] as React.ReactNode)
+                        : null}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             )}
           </TableBody>
+          {footer && (
+            <TableFooter>
+              <TableRow>
+                <TableCell colSpan={columns.length}>{footer}</TableCell>
+              </TableRow>
+            </TableFooter>
+          )}
         </Table>
 
         {/* Enhanced Pagination */}

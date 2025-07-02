@@ -443,32 +443,26 @@ const CategoryEnum = [
 
 const DifficultyEnum = ["EASY", "MEDIUM", "HARD"];
 
-const typeOptions = Array.from(new Set(QUESTION_DATA.map((q) => q.type)));
 const categoryOptions = CategoryEnum;
 const difficultyOptions = DifficultyEnum;
 
 const QuestionTableWithFilter = () => {
-  const [type, setType] = useState<string | null>(null);
   const [category, setCategory] = useState<string | null>(null);
   const [difficulty, setDifficulty] = useState<string | null>(null);
 
   const filteredData = useMemo(() => {
     return QUESTION_DATA.filter(
       (q) =>
-        (!type || q.type === type) &&
         (!category || q.category === category) &&
         (!difficulty || q.difficulty === difficulty)
     );
-  }, [type, category, difficulty]);
+  }, [category, difficulty]);
 
   return (
     <div className="p-6">
       <QuestionPanel
-        typeOptions={typeOptions}
         categoryOptions={categoryOptions}
         difficultyOptions={difficultyOptions}
-        type={type || ""}
-        setType={setType}
         category={category || ""}
         setCategory={setCategory}
         difficulty={difficulty || ""}

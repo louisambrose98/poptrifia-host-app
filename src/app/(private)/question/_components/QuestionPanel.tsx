@@ -3,11 +3,8 @@ import FilterDropdown from "@/components/FilterDropdown";
 import { Button } from "@/components/ui/button";
 
 type Props = {
-  typeOptions: string[];
   categoryOptions: string[];
   difficultyOptions: string[];
-  type: string;
-  setType: (value: string | null) => void;
   category: string;
   setCategory: (value: string | null) => void;
   difficulty: string;
@@ -15,18 +12,14 @@ type Props = {
 };
 
 const QuestionPanel = ({
-  typeOptions,
   categoryOptions,
   difficultyOptions,
-  type,
-  setType,
   category,
   setCategory,
   difficulty,
   setDifficulty,
 }: Props) => {
   const onReset = () => {
-    setType("");
     setCategory("");
     setDifficulty("");
   };
@@ -34,12 +27,6 @@ const QuestionPanel = ({
   return (
     <div className="flex flex-wrap gap-4 mb-6 items-center">
       <span className="font-semibold text-lg mr-4">Questions</span>
-      <FilterDropdown
-        label="Type"
-        options={typeOptions}
-        value={type}
-        onChange={setType}
-      />
       <FilterDropdown
         label="Category"
         options={categoryOptions}
@@ -52,7 +39,7 @@ const QuestionPanel = ({
         value={difficulty}
         onChange={setDifficulty}
       />
-      {(type || category || difficulty) && (
+      {(category || difficulty) && (
         <Button variant="destructive" onClick={onReset}>
           Reset Filters
         </Button>

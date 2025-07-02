@@ -2,11 +2,9 @@
 import DataTable from "@/components/DataTable";
 import ItemBadge from "@/components/ItemBadge";
 import TableText from "@/components/TableText";
-import {
-  QUESTIONS_COLUMNS,
-  QUESTIONS_DESCRIPTION,
-  QUESTIONS_TITLE,
-} from "@/constants/questions";
+import { COMMA, SPACE } from "@/constants/general";
+import { QUESTIONS_TABLE } from "@/constants/questions";
+import { str } from "@/lib/guards";
 import { useRouter } from "next/navigation";
 
 type Question = {
@@ -32,30 +30,30 @@ type Question = {
 
 const columns = [
   {
-    ...QUESTIONS_COLUMNS.question,
+    ...QUESTIONS_TABLE.columns.question,
     render: (row: Question) => <TableText title={row.question} />,
   },
   {
-    ...QUESTIONS_COLUMNS.options,
+    ...QUESTIONS_TABLE.columns.options,
     render: (row: Question) => (
       <TableText
         className="max-w-xs truncate text-muted-foreground"
-        title={row.options.join(", ")}
+        title={row.options.join(str(COMMA, SPACE))}
       />
     ),
   },
   {
-    ...QUESTIONS_COLUMNS.answer,
+    ...QUESTIONS_TABLE.columns.answer,
     render: (row: Question) => <TableText title={row.answer} />,
   },
   {
-    ...QUESTIONS_COLUMNS.category,
+    ...QUESTIONS_TABLE.columns.category,
     render: (row: Question) => (
       <ItemBadge type="category" value={row.category} />
     ),
   },
   {
-    ...QUESTIONS_COLUMNS.difficulty,
+    ...QUESTIONS_TABLE.columns.difficulty,
     render: (row: Question) => (
       <ItemBadge type="difficulty" value={row.difficulty} />
     ),
@@ -69,11 +67,11 @@ const QuestionTable = ({ data }: Props) => {
   const router = useRouter();
   return (
     <DataTable
-      title={QUESTIONS_TITLE}
-      description={QUESTIONS_DESCRIPTION}
+      title={QUESTIONS_TABLE.title}
+      description={QUESTIONS_TABLE.description}
       columns={columns}
       data={data}
-      pageSize={10}
+      pageSize={QUESTIONS_TABLE.pageSize}
       total={data.length}
       getRowId={(row: Question) => row.id}
       onRowClick={(row: Question) => router.push(`/question/${row.id}`)}

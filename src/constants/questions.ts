@@ -1,6 +1,3 @@
-export const QUESTIONS_TITLE = "Questions";
-export const QUESTIONS_DESCRIPTION =
-  "Manage and view all quiz questions in your database";
 export const CATEGORY_ENUM = [
   "ANIMALS",
   "ART",
@@ -33,7 +30,7 @@ export const CATEGORY_ENUM = [
 ];
 export const DIFFICULTY_ENUM = ["EASY", "MEDIUM", "HARD"];
 
-export const QUESTIONS_COLUMNS = {
+const QUESTIONS_COLUMNS = {
   question: {
     label: "Question",
     accessor: "question",
@@ -54,4 +51,18 @@ export const QUESTIONS_COLUMNS = {
     label: "Difficulty",
     accessor: "difficulty",
   },
+};
+
+export const QUESTIONS_PANEL = {
+  filterCategory: "Category",
+  filterDifficulty: "Difficulty",
+  filterReset: "Reset Filters",
+  createButton: "Create New Question",
+};
+
+export const QUESTIONS_TABLE = {
+  columns: QUESTIONS_COLUMNS,
+  title: "Questions",
+  description: "Manage and view all quiz questions in your database",
+  pageSize: 10,
 };

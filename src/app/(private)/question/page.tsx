@@ -1,4 +1,4 @@
-import QuestionTable from "./_components/QuestionTable";
+import QuestionTable from "./_components/QuestionTableWithFilter";
 
 export default function QuestionPage() {
   return (

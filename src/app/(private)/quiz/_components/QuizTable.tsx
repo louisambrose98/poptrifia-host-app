@@ -11,6 +11,7 @@ import {
 } from "@/constants/quiz";
 import { getDateOnly, getHourAndMinutes } from "@/lib/datetime";
 import { getNumber, isValidString } from "@/lib/guards";
+import { useRouter } from "next/navigation";
 
 type Quiz = {
   id: string;
@@ -82,6 +83,7 @@ type Props = {
 };
 
 const QuizTable = ({ data }: Props) => {
+  const router = useRouter();
   return (
     <DataTable
       title={QUIZZES_TITLE}
@@ -91,6 +93,7 @@ const QuizTable = ({ data }: Props) => {
       pageSize={QUIZ_PAGE_SIZE}
       total={data.length}
       getRowId={(row: Quiz) => row.id}
+      onRowClick={(row: Quiz) => router.push(`/quiz/${row.id}`)}
     />
   );
 };

@@ -7,6 +7,7 @@ import {
   QUESTIONS_DESCRIPTION,
   QUESTIONS_TITLE,
 } from "@/constants/questions";
+import { useRouter } from "next/navigation";
 
 type Question = {
   id: string;
@@ -65,6 +66,7 @@ type Props = {
 };
 
 const QuestionTable = ({ data }: Props) => {
+  const router = useRouter();
   return (
     <DataTable
       title={QUESTIONS_TITLE}
@@ -74,6 +76,7 @@ const QuestionTable = ({ data }: Props) => {
       pageSize={10}
       total={data.length}
       getRowId={(row: Question) => row.id}
+      onRowClick={(row: Question) => router.push(`/question/${row.id}`)}
     />
   );
 };

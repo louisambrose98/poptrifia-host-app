@@ -12,16 +12,14 @@ export const ROUTE_STATUS = "/status";
 export const ROUTE_SETTINGS = "/settings";
 export const ROUTE_SUPPORT = "/support";
 
-export const ROUTES = {
-  SIGN_IN: ROUTE_SIGN_IN,
-  SIGN_UP: ROUTE_SIGN_UP,
-  FORGOT_PASSWORD: ROUTE_FORGOT_PASSWORD,
-  RESET_PASSWORD: ROUTE_RESET_PASSWORD,
-  CONFIRM_EMAIL: ROUTE_CONFIRM_EMAIL,
-  DASHBOARD: ROUTE_DASHBOARD,
-  QUESTIONS: ROUTE_QUESTIONS,
-  QUIZ: ROUTE_QUIZ,
-  STATUS: ROUTE_STATUS,
-  SETTINGS: ROUTE_SETTINGS,
-  SUPPORT: ROUTE_SUPPORT,
-};
+export const NAV_ITEMS = [
+  { href: ROUTE_DASHBOARD, label: "Dashboard" },
+  { href: ROUTE_QUESTIONS, label: "Questions" },
+  { href: ROUTE_QUIZ, label: "Quiz" },
+  { href: ROUTE_STATUS, label: "Status" },
+];
+
+export const RIGHT_NAV_ITEMS = [
+  { href: ROUTE_SETTINGS, label: "Settings" },
+  { href: ROUTE_SUPPORT, label: "Support" },
+];

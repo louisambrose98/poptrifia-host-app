@@ -1,79 +1,65 @@
 "use client";
 
-import DataTable from "@/components/DataTable";
+import BadgeLabel from "@/components/BadgeLabel";
+import ItemBadge from "@/components/ItemBadge";
+import QuestionOption from "@/components/QuestionOption";
+import { DASHBOARD_PREV_QUIZ } from "@/constants/dashboard";
 import { DUMMYY_PREV_QUIZ } from "@/constants/dummy";
-import { QUIZ_TITLE } from "@/constants/quiz";
 import { useState } from "react";
+import PanelPrevNext from "./PanelPrevNext";
+import TableTitle from "./TableTitle";
 
 const PreviousQuizTable = () => {
   const [questionIdx, setQuestionIdx] = useState(0);
 
   const currentQuestion = DUMMYY_PREV_QUIZ.questions[questionIdx];
+  const { title } = DASHBOARD_PREV_QUIZ;
+
+  const handlePrevious = () => {
+    setQuestionIdx((idx) => Math.max(0, idx - 1));
+  };
+
+  const handleNext = () => {
+    setQuestionIdx((idx) =>
+      Math.min(DUMMYY_PREV_QUIZ.questions.length - 1, idx + 1)
+    );
+  };
 
   return (
-    <div className="mt-12">
-      <h2 className="text-2xl font-semibold mb-2">
-        Previous Quiz: {QUIZ_TITLE} {DUMMYY_PREV_QUIZ.name}
-      </h2>
-      <div className="flex items-center justify-between mb-2">
-        <span className="text-muted-foreground">
-          Question {questionIdx + 1} of {DUMMYY_PREV_QUIZ.questions.length}
-        </span>
-        <div className="flex gap-2">
-          <button
-            className="px-3 py-1 rounded border bg-muted text-foreground disabled:opacity-50"
-            onClick={() => setQuestionIdx((idx) => Math.max(0, idx - 1))}
-            disabled={questionIdx === 0}
-          >
-            Previous
-          </button>
-          <button
-            className="px-3 py-1 rounded border bg-muted text-foreground disabled:opacity-50"
-            onClick={() =>
-              setQuestionIdx((idx) =>
-                Math.min(DUMMYY_PREV_QUIZ.questions.length - 1, idx + 1)
-              )
-            }
-            disabled={questionIdx === DUMMYY_PREV_QUIZ.questions.length - 1}
-          >
-            Next
-          </button>
-        </div>
-      </div>
-      <div className="mb-2">
-        <div className="font-medium text-lg mb-1">
+    <div className="w-full max-w-2xl mx-auto mt-10">
+      <TableTitle title={title} />
+      <div className="bg-card rounded-xl shadow p-6 mb-6 border">
+        <div className="font-semibold text-lg sm:text-xl mb-2 text-primary">
           {currentQuestion.question}
         </div>
-        <div className="text-sm text-muted-foreground mb-1">
-          <span className="mr-4">Category: {currentQuestion.category}</span>
-          <span className="mr-4">Difficulty: {currentQuestion.difficulty}</span>
-          <span>Timer: {currentQuestion.timer}s</span>
+
+        <div className="flex flex-wrap gap-x-4 gap-y-1 mb-4">
+          <ItemBadge type="category" value={currentQuestion.category} />
+          <ItemBadge type="difficulty" value={currentQuestion.difficulty} />
+          <BadgeLabel label="Timer" value={currentQuestion.timer} />
+          <BadgeLabel label="Score" value={currentQuestion.score} />
+          <BadgeLabel label="Coins" value={currentQuestion.coins} />
         </div>
-        <div className="text-sm text-muted-foreground mb-1">
-          <span className="mr-4">Score: {currentQuestion.score}</span>
-          <span>Coins: {currentQuestion.coins}</span>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+          {currentQuestion.options.map((opt, idx) => (
+            <QuestionOption
+              key={idx}
+              isCorrect={opt.option === currentQuestion.answer}
+              value={opt.option}
+            />
+          ))}
         </div>
+
+        <hr className="my-4" />
+
+        <PanelPrevNext
+          total={DUMMYY_PREV_QUIZ.questions.length}
+          current={questionIdx}
+          onPrevious={handlePrevious}
+          onNext={handleNext}
+        />
       </div>
-      <DataTable
-        columns={[
-          { label: "Option", accessor: "option" },
-          { label: "Count", accessor: "count" },
-          {
-            label: "Is Answer",
-            accessor: "isAnswer",
-            render: (row) =>
-              row.option === currentQuestion.answer ? (
-                <span className="text-green-600 font-bold">✔</span>
-              ) : null,
-          },
-        ]}
-        data={currentQuestion.options.map((opt) => ({
-          ...opt,
-          isAnswer: opt.option === currentQuestion.answer,
-        }))}
-        pageSize={currentQuestion.options.length}
-        total={currentQuestion.options.length}
-      />
     </div>
   );
 };

@@ -1,53 +1,38 @@
 import StatusCard from "@/components/StatusCard";
-
-const STATUS_DATA = {
-  id: "27d6c6fc-28fc-4959-8750-ec8a9d19e826",
-  type: "PUBLIC",
-  numQuestions: 10,
-  maxScore: 19,
-  duration: 150,
-  stime: "2025-07-01T20:02:00.617Z",
-  etime: "2025-07-01T20:04:15.617Z",
-  ctime: "2025-07-01T20:06:15.617Z",
-  ntime: "2025-07-02T04:00:30.617Z",
-};
-
-// Example quiz info (replace with real data as needed)
-const PREV_QUIZ = {
-  name: "Quiz #17",
-  date: "2025-07-01T20:00:27.838Z",
-  players: 2,
-  questions: Array(10),
-  winner: "karenon",
-};
+import { DASHBOARD_STATUS } from "@/constants/dashboard";
+import { DUMMY_STATUS_DATA, DUMMYY_PREV_QUIZ } from "@/constants/dummy";
+import { sentence } from "@/lib/guards";
 
 const StatusGrid = () => {
+  const {
+    titleDetails,
+    titleQuiz,
+    titleStatus,
+    titleScore,
+    msgQuestions,
+    msgPlayers,
+    msgDuration,
+  } = DASHBOARD_STATUS;
+  const { name, questions, players, date } = DUMMYY_PREV_QUIZ;
+  const { id, type, maxScore, duration } = DUMMY_STATUS_DATA;
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8 w-full">
       <StatusCard
-        title="Previous Details"
-        value={PREV_QUIZ.name}
-        description={`${PREV_QUIZ.questions.length} questions`}
+        title={titleDetails}
+        value={name}
+        description={sentence(questions.length, msgQuestions)}
       />
       <StatusCard
-        title="Previous Winner"
-        value={PREV_QUIZ.winner}
-        description={PREV_QUIZ.date}
+        title={titleQuiz}
+        value={sentence(players, msgPlayers)}
+        description={id}
       />
+      <StatusCard title={titleStatus} value={type} description={date} />
       <StatusCard
-        title="Previous Quiz"
-        value={`${PREV_QUIZ.players} player(s)`}
-        description={STATUS_DATA.id}
-      />
-      <StatusCard
-        title="Quiz Status"
-        value={STATUS_DATA.type}
-        description={"3 hours ago"}
-      />
-      <StatusCard
-        title="Max Score"
-        value={STATUS_DATA.maxScore}
-        description={`Duration: ${STATUS_DATA.duration}s`}
+        title={titleScore}
+        value={maxScore}
+        description={sentence(duration, msgDuration)}
       />
     </div>
   );

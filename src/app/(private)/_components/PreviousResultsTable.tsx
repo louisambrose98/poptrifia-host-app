@@ -1,28 +1,32 @@
 "use client";
 
 import DataTable from "@/components/DataTable";
+import { DASHBOARD_PREV_RESULTS } from "@/constants/dashboard";
 import { DUMMY_PREV_RESULTS } from "@/constants/dummy";
+import { navigateToUser } from "@/lib/navigation";
+import TableTitle from "./TableTitle";
 
 const PreviousResultsTable = () => {
+  const { title, columns, pageSize } = DASHBOARD_PREV_RESULTS;
+
   return (
-    <div className="mt-10">
-      <h2 className="text-xl font-semibold mb-2">Previous Results</h2>
+    <div className="w-full overflow-x-auto mt-6 sm:mt-10">
+      <TableTitle title={title} />
       <DataTable
         columns={[
-          { label: "Username", accessor: "username" },
-          { label: "Country", accessor: "country" },
-          { label: "Score", accessor: "score" },
+          { ...columns.username },
+          { ...columns.country },
+          { ...columns.score },
           {
-            label: "Time (s)",
-            accessor: "time",
-            render: (row) => row.time.toFixed(2),
+            ...columns.time,
+            render: (row) => row.time.toFixed(3),
           },
         ]}
         data={DUMMY_PREV_RESULTS}
-        pageSize={5}
+        pageSize={pageSize}
         total={DUMMY_PREV_RESULTS.length}
         getRowId={(row, idx) => row.username + idx}
-        onRowClick={(row) => console.log(`/user/${row.username}`)}
+        onRowClick={(row) => navigateToUser(row.username)}
       />
     </div>
   );

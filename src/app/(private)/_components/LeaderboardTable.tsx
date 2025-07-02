@@ -1,25 +1,28 @@
 "use client";
 
 import DataTable from "@/components/DataTable";
+import { DASHBOARD_LEADERBOARD } from "@/constants/dashboard";
 import { DUMMY_LEADERBOARD } from "@/constants/dummy";
-
-const PAGE_SIZE = 5;
+import { navigateToUser } from "@/lib/navigation";
+import TableTitle from "./TableTitle";
 
 const LeaderboardTable = () => {
+  const { title, columns, pageSize } = DASHBOARD_LEADERBOARD;
+
   return (
-    <div className="max-w-3xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Current Leaderboard</h1>
+    <div className="w-full overflow-x-auto px-1 sm:px-2 md:px-0 md:max-w-3xl md:mx-auto">
+      <TableTitle title={title} />
       <DataTable
         columns={[
-          { label: "Username", accessor: "username" },
-          { label: "Country", accessor: "country" },
-          { label: "Score", accessor: "score" },
+          { ...columns.username },
+          { ...columns.country },
+          { ...columns.score },
         ]}
         data={DUMMY_LEADERBOARD}
-        pageSize={PAGE_SIZE}
+        pageSize={pageSize}
         total={DUMMY_LEADERBOARD.length}
         getRowId={(row) => row.id}
-        onRowClick={(row) => console.log(`/user/${row.username}`)}
+        onRowClick={(row) => navigateToUser(row.username)}
       />
     </div>
   );

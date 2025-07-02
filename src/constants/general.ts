@@ -12,3 +12,8 @@ export const RETURN = "\r";
 export const ZERO = 0;
 export const ONE = 1;
 export const SECOND = 1000;
+
+export const SHOWING = "Showing";
+export const OF = "of";
+export const PREVIOUS = "Previous";
+export const NEXT = "Next";

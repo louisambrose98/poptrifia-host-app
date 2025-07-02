@@ -955,3 +955,15 @@ export const DUMMYY_PREV_QUIZ = {
     },
   ],
 };
+
+export const DUMMY_STATUS_DATA = {
+  id: "27d6c6fc-28fc-4959-8750-ec8a9d19e826",
+  type: "PUBLIC",
+  numQuestions: 10,
+  maxScore: 19,
+  duration: 150,
+  stime: "2025-07-01T20:02:00.617Z",
+  etime: "2025-07-01T20:04:15.617Z",
+  ctime: "2025-07-01T20:06:15.617Z",
+  ntime: "2025-07-02T04:00:30.617Z",
+};

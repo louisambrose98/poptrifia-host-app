@@ -34,12 +34,10 @@ const columns = [
     label: "Options",
     accessor: "options",
     render: (row: Question) => (
-      <div
+      <TableText
         className="max-w-xs truncate text-muted-foreground"
         title={row.options.join(", ")}
-      >
-        {row.options.join(", ")}
-      </div>
+      />
     ),
   },
   {

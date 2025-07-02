@@ -3,6 +3,7 @@ export const SPACE = " ";
 export const DOT = ".";
 export const COLON = ":";
 export const COMMA = ",";
+export const DASH = "-";
 export const SEMICOLON = ";";
 export const NEWLINE = "\n";
 export const TAB = "\t";

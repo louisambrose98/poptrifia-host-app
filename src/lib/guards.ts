@@ -1,4 +1,4 @@
-import { DOT, EMPTY, ONE, SECOND, SPACE } from "../constants/general";
+import { DOT, EMPTY, ONE, SECOND, SPACE } from "@/constants/general";
 
 export const isNull = (data: unknown): data is null => data === null;
 
@@ -51,13 +51,18 @@ export const sentence = (...args: unknown[]): string =>
 export const getPosition = (position: number): string =>
   str(position + ONE, DOT);
 
-export const getNumber = <T>(ret: T, val?: any) =>
+export const getNumber = <T>(ret: T, val?: unknown) =>
   isValidNumber(val) ? val : ret;
 
-export const getString = <T>(ret: T, val?: any) =>
+export const getString = <T>(ret: T, val?: unknown) =>
   isValidString(val) ? val : ret;
 
 export const toTitleCase = (input: string): string => {
   if (!isValidString(input)) return EMPTY;
   return input.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
+};
+
+export const toLowerCaseTrimmed = (input: string): string => {
+  if (!isValidString(input)) return EMPTY;
+  return input.trim().toLowerCase();
 };

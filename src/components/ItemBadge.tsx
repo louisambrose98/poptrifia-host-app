@@ -2,12 +2,13 @@ import { Badge } from "@/components/ui/badge";
 import React from "react";
 
 interface ItemBadgeProps {
-  type: "type" | "category" | "difficulty";
+  type: "type" | "category" | "difficulty" | "status" | "room" | "winner";
   value: string | number;
 }
 
 const typeStyles: Record<string, string> = {
   type: "bg-secondary/10 text-secondary-foreground border-secondary/20 rounded-md",
+  // Category styles
   category_animals:
     "bg-orange-100 text-orange-800 border-orange-200 rounded-md",
   category_art: "bg-pink-100 text-pink-800 border-pink-200 rounded-md",
@@ -55,6 +56,19 @@ const typeStyles: Record<string, string> = {
     "bg-yellow-100 text-yellow-800 border-yellow-200 rounded-full",
   difficulty_hard: "bg-red-100 text-red-800 border-red-200 rounded-full",
   difficulty_default: "bg-gray-100 text-gray-800 border-gray-200 rounded-full",
+  // Status styles
+  status_new: "bg-green-100 text-green-800 border-green-200 rounded-full",
+  status_next: "bg-yellow-100 text-yellow-800 border-yellow-200 rounded-full",
+  status_hold: "bg-red-100 text-red-800 border-red-200 rounded-full",
+  status_done: "bg-blue-100 text-blue-800 border-blue-200 rounded-full",
+  status_default: "bg-gray-100 text-gray-800 border-gray-200 rounded-full",
+  // Room styles
+  room_public: "bg-green-100 text-green-800 border-green-200 rounded-full",
+  room_default: "bg-gray-100 text-gray-800 border-gray-200 rounded-full",
+  // Winner styles
+  winner_won: "bg-green-100 text-green-800 border-green-200 rounded-full",
+  winner_lost: "bg-red-100 text-red-800 border-red-200 rounded-full",
+  winner_default: "bg-gray-100 text-gray-800 border-gray-200 rounded-full",
 };
 
 export const ItemBadge: React.FC<ItemBadgeProps> = ({ type, value }) => {
@@ -69,7 +83,17 @@ export const ItemBadge: React.FC<ItemBadgeProps> = ({ type, value }) => {
     const diff = String(value).toLowerCase();
     className =
       typeStyles[`difficulty_${diff}`] || typeStyles.difficulty_default;
+  } else if (type === "status") {
+    const status = String(value).toLowerCase();
+    className = typeStyles[`status_${status}`] || typeStyles.status_default;
+  } else if (type === "room") {
+    const room = String(value).toLowerCase();
+    className = typeStyles[`room_${room}`] || typeStyles.room_default;
+  } else if (type === "winner") {
+    const winner = String(value).toLowerCase();
+    className = typeStyles[`winner_${winner}`] || typeStyles.winner_default;
   }
+
   return <Badge className={className}>{value}</Badge>;
 };
 

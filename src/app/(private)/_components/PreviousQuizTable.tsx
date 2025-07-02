@@ -26,14 +26,14 @@ const PreviousQuizTable = () => {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto mt-10">
+    <div className="w-full overflow-x-auto mt-6 sm:mt-10">
       <TableTitle title={title} />
       <div className="bg-card rounded-xl shadow p-6 mb-6 border">
         <div className="font-semibold text-lg sm:text-xl mb-2 text-primary">
           {currentQuestion.question}
         </div>
 
-        <div className="flex flex-wrap gap-x-4 gap-y-1 mb-4">
+        <div className="flex flex-wrap gap-x-2 gap-y-1 mb-4">
           <ItemBadge type="category" value={currentQuestion.category} />
           <ItemBadge type="difficulty" value={currentQuestion.difficulty} />
           <BadgeLabel label="Timer" value={currentQuestion.timer} />
@@ -41,7 +41,7 @@ const PreviousQuizTable = () => {
           <BadgeLabel label="Coins" value={currentQuestion.coins} />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+        <div className="space-y-1">
           {currentQuestion.options.map((opt, idx) => (
             <QuestionOption
               key={idx}

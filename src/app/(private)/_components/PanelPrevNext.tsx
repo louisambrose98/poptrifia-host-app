@@ -27,7 +27,7 @@ type Props = {
 };
 
 const PanelPrevNext = ({ total, current, onPrevious, onNext }: Props) => (
-  <div className="flex items-center justify-between mb-6">
+  <div className="flex items-center justify-between">
     <div className="flex-1 mb-4">
       <p className="text-center text-muted-foreground text-sm">
         {sentence(SHOWING, current + 1, OF, total)}

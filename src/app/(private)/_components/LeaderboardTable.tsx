@@ -10,7 +10,7 @@ const LeaderboardTable = () => {
   const { title, columns, pageSize } = DASHBOARD_LEADERBOARD;
 
   return (
-    <div className="w-full overflow-x-auto px-1 sm:px-2 md:px-0 md:max-w-3xl md:mx-auto">
+    <div className="w-full overflow-x-auto mt-6 sm:mt-10">
       <TableTitle title={title} />
       <DataTable
         columns={[

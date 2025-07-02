@@ -1,9 +1,9 @@
-import QuestionTable from "./_components/QuestionTableWithFilter";
+import QuestionTableWithFilter from "./_components/QuestionTableWithFilter";
 
 export default function QuestionPage() {
   return (
     <div className="max-w-full px-6 py-6">
-      <QuestionTable />
+      <QuestionTableWithFilter />
     </div>
   );
 }

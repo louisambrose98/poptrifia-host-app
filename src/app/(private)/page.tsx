@@ -1,8 +1,13 @@
-export default function PrivateHome() {
+import LeaderboardTable from "./question/_components/LeaderboardTable";
+import PreviousQuizTable from "./question/_components/PreviousQuizTable";
+import PreviousResultsTable from "./question/_components/PreviousResultsTable";
+
+export default function DashboardPage() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
-      <h1 className="text-3xl font-bold">Private Home</h1>
-      <p>Welcome to the private area of Poptrifia!</p>
+    <div className="max-w-3xl mx-auto">
+      <LeaderboardTable />
+      <PreviousResultsTable />
+      <PreviousQuizTable />
     </div>
   );
 }
